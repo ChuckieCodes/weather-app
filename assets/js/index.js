@@ -57,30 +57,30 @@ function format_date(date) {
   return [month, day, year].join('/');
 }
 
-function searchCity() {
+async function searchCity() {
   // get city from input
   const city = document.getElementById('searchCityField').value;
 
+  // clear past data
+  document.querySelector('#futureForecast').innerHTML = '';
+  
+  // get city weather
+  await getWeather(city);
+
   // store search
-  let rSearchTmp = getRecentSearches();
+  let rSearchTmp = await getRecentSearches();
   const rSearch = rSearchTmp.filter((e) => e !== city);
   rSearch.unshift(city);
 
   localStorage.setItem('rSearches', JSON.stringify(rSearch));
 
   writeRecentSearches(rSearch);
-
-  // clear past data
-  document.querySelector('#futureForecast').innerHTML = '';
-  
-  // get city weather
-  getWeather(city);
 }
 
-function getWeather(city) {
+async function getWeather(city) {
   const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=imperial&appid=${apiKey}`;
 
-  fetch(apiUrl)
+  await fetch(apiUrl)
     .then((response) => {
       if (!response.ok) {
         document.getElementById('tCityDate').innerHTML = `404 City Not Found - ${city}`;
