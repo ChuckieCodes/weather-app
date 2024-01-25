@@ -5,6 +5,44 @@ const searchCityBtn = document.getElementById('searchCityBtn');
 const futureForecast = document.querySelector('#futureForecast');
 const recentSearch = document.querySelector('#recentSearch');
 
+// make recent searches 
+const recentSearchUi = document.querySelector('#recentSearch').addEventListener('click', function(event) {
+  const cityTmp = event.target.getAttribute('data-name');
+  
+  // update search field
+  document.getElementById('searchCityField').value = cityTmp;
+
+  // fire search
+  searchCity();
+});
+
+// get recent searches
+function getRecentSearches() {
+  const rSearchToUi = JSON.parse(localStorage.getItem('rSearches'));
+  return rSearchToUi !== null ? rSearchToUi : [];
+}
+
+// write each searches
+function writeRecentSearches(rSearch) {
+  // clear every write
+  recentSearch.innerHTML = '';
+
+  // append
+  if (rSearch.length > 0) {
+    for (let search of rSearch) {
+      const searchItem = document.createElement('button');
+      searchItem.className = 'btn btn-sm btn-primary w-100 mb-1 cityBtn';
+      searchItem.dataset.name = search;
+      searchItem.innerHTML = search;
+      recentSearch.appendChild(searchItem);
+    }
+  }
+}
+
+// run on start
+let rSearch = getRecentSearches();
+writeRecentSearches(rSearch);
+
 // date formatter
 function format_date(date) {
   const d = new Date(date);
@@ -22,6 +60,15 @@ function format_date(date) {
 function searchCity() {
   // get city from input
   const city = document.getElementById('searchCityField').value;
+
+  // store search
+  let rSearchTmp = getRecentSearches();
+  const rSearch = rSearchTmp.filter((e) => e !== city);
+  rSearch.unshift(city);
+
+  localStorage.setItem('rSearches', JSON.stringify(rSearch));
+
+  writeRecentSearches(rSearch);
 
   // clear past data
   document.querySelector('#futureForecast').innerHTML = '';
