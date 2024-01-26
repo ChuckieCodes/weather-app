@@ -17,7 +17,6 @@ A web based app that fetch data from open weather api to let the user  see  the 
 
 ## Installation
 - clone repository
-- npm install
 
 ## Usage
 - node index.js
